@@ -1,6 +1,7 @@
 use std::io::Cursor;
 use color_eyre::{Result};
 use polars::prelude::*;
+// use pl::SeriesMethods;
 use reqwest::blocking::Client;
 
 pub fn run() -> Result<()> { 
@@ -36,12 +37,22 @@ pub fn run() -> Result<()> {
     println!("Data Frame description:");
     println!("{:?}", df.describe(None));
 
-    let target_value_counts = df
-                                        .lazy()
-                                        .select([col(target).value_counts(true)])
-                                        .collect()?
-                                        ;
+    // let s = df.lazy()
+    //         .select([col(target)])
+    //         .collect()?;
+    let s = Series::new(target, [0,1,0,1,0,1,0,1,1,0,1,0,1,0,0,0,0,0,1,1,1,0,0,1]);
+    // let s = Series::new(target, df.select([target]));
+
+    let target_value_counts = s.value_counts(true, true);
     println!("{:?}", target_value_counts);
 
+    // show the correlations between all of the features of interest
+    // let Glucose_BMI_corr = pearson_corr(df.lazy().select([col("Glucose")]).collect()?, 
+    //                                         df.lazy().select([col("BMI")]).collect()?, 
+    //                                         1);
+
+    // df.pearson_corr("Glucose", "BMI", 1);
+
+    // println!("{:?}", Glucose_BMI_corr);
     Ok(())
 }
