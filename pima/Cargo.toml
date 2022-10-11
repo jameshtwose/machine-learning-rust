@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 color-eyre = "0.6.2"
+smartcore = "0.2.0"
 polars = { version = "0.24.0", features = ["describe", "lazy", "csv-file", "strings", 
                                             "dtype-datetime",
                                             "temporal", "dtype-duration", "dtype-categorical", 
