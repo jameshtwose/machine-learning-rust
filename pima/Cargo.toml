@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 color-eyre = "0.6.2"
 polars = { version = "0.24.0", features = ["describe", "lazy", "csv-file", "strings", 
+                                            "dtype-datetime",
                                             "temporal", "dtype-duration", "dtype-categorical", 
                                             "concat_str", "list", "list_eval", "rank", 
                                             "lazy_regex", "abs","cum_agg","round_series",

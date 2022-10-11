@@ -4,7 +4,10 @@ use polars::prelude::*;
 // use pl::SeriesMethods;
 use reqwest::blocking::Client;
 
-pub fn run() -> Result<()> { 
+pub fn run() -> Result<()> {
+    
+    println!("Exploratory Data Analysis");
+    println!("=========================");
     
     // specify the URL where the csv is located
     let csv_url = "https://raw.githubusercontent.com/jameshtwose/example_deliverables/main/classification_examples/pima_diabetes/diabetes.csv";
