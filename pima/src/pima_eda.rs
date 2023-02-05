@@ -46,22 +46,13 @@ pub fn run() -> Result<()> {
     let Glucose_BMI_corr = df
         .select(["Glucose", "BMI"])
         .unwrap()
-        .to_ndarray::<Float64Type>()?
-        // .unwrap()
-        .pearson_correlation();
-
-    let tmp = df
-        .select(["Glucose", "BMI"])
+        // .head(Some(3))
+        .transpose()
         .unwrap()
-        .to_ndarray::<Float64Type>()?;
-
-    let tmp2 = Array::from_shape_vec((2, 768).f(), vec![tmp])?;
-
-    // let a = arr2(&[[1., 3., 5.],
-    //     [2., 4., 6.]]);
-    // let corr = a.pearson_correlation().unwrap();
-
-    println!("{:?}", tmp2);
-    // println!("{:?}", Glucose_BMI_corr);
+        .to_ndarray::<Float64Type>()?
+        .pearson_correlation()
+        .unwrap();
+    println!("Correlation between Glucose and BMI:");
+    println!("{:?}", Glucose_BMI_corr);
     Ok(())
 }
