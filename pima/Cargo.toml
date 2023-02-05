@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 color-eyre = "0.6.2"
 smartcore = "0.2.0"
+ndarray = "0.15.4"
+ndarray-stats = "0.5.1"
 polars = { version = "0.24.0", features = ["describe", "lazy", "csv-file", "strings", 
                                             "dtype-datetime", "ndarray",
                                             "temporal", "dtype-duration", "dtype-categorical", 
