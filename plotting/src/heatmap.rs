@@ -45,7 +45,7 @@ pub fn run() -> Result<()> {
 
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
 
-    basic_heat_map(z, true, false);
+    basic_heat_map(z, true, true);
 
     Ok(())
 }
