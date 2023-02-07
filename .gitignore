@@ -11,3 +11,4 @@ Cargo.lock
 
 .ipynb_checkpoints
 # images/
+scratch*
