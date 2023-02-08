@@ -72,7 +72,7 @@ pub fn run() -> Result<()> {
         .into_no_null_iter()
         .collect();
 
-    simple_scatter_plot(x, y, true, true);
+    // simple_scatter_plot(x, y, true, false);
 
     Ok(())
 }

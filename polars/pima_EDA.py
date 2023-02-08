@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from jmspack.utils import apply_scaling
 import session_info
+import plotly.express as px
 
 # %%
 if "jms_style_sheet" in plt.style.available:
@@ -54,6 +55,12 @@ _ = plt.figure(figsize=(20, 4))
 _ = sns.heatmap(plot_df.T)
 
 # %%
+px.imshow(plot_df.T.values, 
+          x=plot_df.index, 
+           y=plot_df.columns, 
+           )
+
+# %%
 _ = plt.figure(figsize=(20, 4))
 _ = sns.heatmap(plot_df
                 .pipe(apply_scaling)
@@ -64,11 +71,11 @@ _ = plt.figure(figsize=(7, 4))
 _ = sns.heatmap(plot_df.corr(), annot=True)
 
 # %%
+plot_df.reset_index().melt(id_vars="index")
+
+# %%
 pl.pearson_corr(a=df.select([pl.col("Glucose")]), 
                 b=df.select([pl.col("BMI")]),
                 ddof=1)
 
 # %%
-
-
-

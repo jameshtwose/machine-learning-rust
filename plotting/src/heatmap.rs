@@ -2,6 +2,8 @@ use color_eyre::Result;
 use polars::prelude::*;
 use reqwest::blocking::Client;
 use std::io::Cursor;
+use std::ops::Index;
+use std::convert::TryFrom;
 
 use plotly::common::{ColorScale, ColorScalePalette, Title};
 use plotly::contour::Contours;
@@ -12,7 +14,9 @@ pub fn run() -> Result<()> {
     println!("===================================");
 
     // define the heatmap function
-    fn basic_heat_map(input: Vec<Vec<i32>>, show: bool, saveimg: bool) {
+    fn basic_heat_map(x: Vec<i32>, y: Vec<i32>, z: Vec<i32>, show: bool, saveimg: bool) {
+        
+        let input = vec![x, y, z];
         let trace = HeatMap::new_z(input);
         let mut plot = Plot::new();
         plot.add_trace(trace);
@@ -43,9 +47,17 @@ pub fn run() -> Result<()> {
     // apply the filter on a DataFrame
     let df = pre_df.filter(&mask)?;
 
-    let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
+    let x = df.get_column_names();
+    let (y, _) = df.shape();
+    let new_vec: Vec<usize> = (0..y).collect();
 
-    basic_heat_map(z, true, true);
+    println!("{:?}", new_vec);
+
+    // let x = vec![1, 20, 30]; 
+    // let y = vec![20, 1, 60];
+    // let z = vec![30, 60, 1];
+
+    // basic_heat_map(x, y, z, true, true);
 
     Ok(())
 }
