@@ -1,9 +1,9 @@
 use color_eyre::Result;
 use polars::prelude::*;
 use reqwest::blocking::Client;
+use std::convert::TryFrom;
 use std::io::Cursor;
 use std::ops::Index;
-use std::convert::TryFrom;
 
 use plotly::common::{ColorScale, ColorScalePalette, Title};
 use plotly::contour::Contours;
@@ -13,22 +13,6 @@ pub fn run() -> Result<()> {
     println!("Exploratory Data Analysis - Heatmap");
     println!("===================================");
 
-    // define the heatmap function
-    fn basic_heat_map(x: Vec<i32>, y: Vec<i32>, z: Vec<i32>, show: bool, saveimg: bool) {
-        
-        let input = vec![x, y, z];
-        let trace = HeatMap::new_z(input);
-        let mut plot = Plot::new();
-        plot.add_trace(trace);
-        if show {
-            plot.show();
-        }
-        if saveimg {
-            plot.to_html("images/heatmap.html");
-        }
-    }
-
-    
     // specify the URL where the csv is located
     let csv_url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv";
 
@@ -45,19 +29,34 @@ pub fn run() -> Result<()> {
     // create a mask of boolean (non null) values
     let mask = pre_df.column("sex")?.is_not_null();
     // apply the filter on a DataFrame
-    let df = pre_df.filter(&mask)?;
+    let df: DataFrame = pre_df.filter(&mask)?;
 
-    let x = df.get_column_names();
-    let (y, _) = df.shape();
-    let new_vec: Vec<usize> = (0..y).collect();
+    // the df.get_column_names() gives a not live long enough error in conjunction with the y creation
 
-    println!("{:?}", new_vec);
+    // let x = df.get_column_names();
+    // let (y_rows, _) = df.shape();
+    // let y: Vec<usize> = (0..y_rows).collect();
 
-    // let x = vec![1, 20, 30]; 
-    // let y = vec![20, 1, 60];
-    // let z = vec![30, 60, 1];
+    // println!("{:?}", x);
 
-    // basic_heat_map(x, y, z, true, true);
+    let x = vec![0.5, 1.5, 2.5];
+    let y: Vec<&str> = vec!["day 1", "day 2", "day 3"];
+    // let y = vec![0.5, 1.5, 2.5];
+    let z = vec![vec![10.8, 50.6, 1.3], vec![20.8, 60.6, 2.3], vec![30.8, 70.6, 3.3]];
+
+    let trace = HeatMap::new(x, y, z);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let saveimg = false;
+    let show = true;
+    
+    if saveimg {
+        plot.to_html("images/heatmap.html");
+    }
+    if show {
+        plot.show();
+    }
 
     Ok(())
 }
