@@ -2,6 +2,8 @@ use std::io::Cursor;
 use color_eyre::{Result};
 use polars::prelude::*;
 use reqwest::blocking::Client;
+use smartcore::linear::logistic_regression::LogisticRegression;
+use smartcore::metrics::accuracy;
 
 pub fn run() -> Result<()> { 
 
@@ -37,10 +39,18 @@ pub fn run() -> Result<()> {
         // .replace_all(0, "")?
         ;
         println!("{:?}", tmp_df.head(Some(1)));
-
     }
 
-    
+    let X = df
+        .drop(target)?
+        .to_ndarray::<Float64Type>()?;
+
+    let y = df.select([target])
+        .unwrap()
+        .to_ndarray::<Float64Type>()?;
+
+    println!("X: {:?}", X);
+    println!("y: {:?}", y);
 
     Ok(())
 }
