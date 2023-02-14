@@ -1,11 +1,34 @@
-use ndarray::prelude::*;
+use ndarray::{prelude::*, Data};
 // use ndarray::arr2;
 use ndarray_stats::CorrelationExt;
 use color_eyre::Result;
 use polars::prelude::*;
 use std::io::Cursor;
+use statrs::distribution::Beta;
+use statrs::distribution::ContinuousCDF;
+use conv::prelude::*;
 // use pl::SeriesMethods;
 use reqwest::blocking::Client;
+
+pub fn pearson_correlation(data: DataFrame, feature1: &str, feature2: &str) -> Result<()> {
+    let corr = data
+        .select([feature1, feature2])
+        .unwrap()
+        .transpose()
+        .unwrap()
+        .to_ndarray::<Float64Type>()?
+        .pearson_correlation()
+        .unwrap();
+    
+    let r_val = corr.get((0, 1)).unwrap();
+    let nrows = data.shape().0.value_as::<f64>().unwrap();
+    let dist = Beta::new((nrows/ 2.0) - 1.0, (nrows/ 2.0) - 1.0).unwrap();
+    let p_val = 2.0 * dist.cdf(-(r_val-1.0)/2.0);
+
+    println!("Correlation between {} and {}:", feature1, feature2);
+    println!("r-value = {:?}, p-value = {:?}", r_val, p_val);
+    Ok(())
+}
 
 pub fn run() -> Result<()> {
     println!("Exploratory Data Analysis");
@@ -43,16 +66,16 @@ pub fn run() -> Result<()> {
     );
 
     // calculate the correlation between the target and the other columns
-    let Glucose_BMI_corr = df
-        .select(["Glucose", "BMI"])
-        .unwrap()
-        // .head(Some(3))
-        .transpose()
-        .unwrap()
-        .to_ndarray::<Float64Type>()?
-        .pearson_correlation()
-        .unwrap();
-    println!("Correlation between Glucose and BMI:");
-    println!("{:?}", Glucose_BMI_corr);
+    // pearson_correlation(df, "Glucose", "BloodPressure")?;
+    let feature_list = ["BloodPressure", "SkinThickness", "Insulin", "BMI", "DiabetesPedigreeFunction", "Age"];
+
+    pearson_correlation(df, "Glucose", feature_list[3])?;
+
+    // the for loop doesn't work with polars data frames, so need to use a different method
+    // https://stackoverflow.com/questions/72372821/how-to-apply-a-function-to-multiple-columns-of-a-polars-dataframe-in-rust
+    // for element in feature_list {
+    //     pearson_correlation(df, "Glucose", element)?;
+    // }
+
     Ok(())
 }

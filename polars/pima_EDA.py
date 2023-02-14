@@ -10,6 +10,7 @@ import numpy as np
 from jmspack.utils import apply_scaling
 import session_info
 import plotly.express as px
+from scipy.stats import pearsonr, beta
 
 # %%
 if "jms_style_sheet" in plt.style.available:
@@ -74,8 +75,19 @@ _ = sns.heatmap(plot_df.corr(), annot=True)
 plot_df.reset_index().melt(id_vars="index")
 
 # %%
-pl.pearson_corr(a=df.select([pl.col("Glucose")]), 
-                b=df.select([pl.col("BMI")]),
-                ddof=1)
+# pl.pearson_corr(a=df.select([pl.col("Glucose")]), 
+#                 b=df.select([pl.col("BMI")]),
+#                 ddof=1)
+
+# %%
+r_val, p_val = pearsonr(df.to_pandas()["Glucose"], df.to_pandas()["BMI"])
+r_val, p_val
+# %%
+dist = beta(df.shape[0]/2 - 1,
+            df.shape[0]/2 - 1, loc=-1, scale=2)
+# %%
+p_val_2 = 2*dist.cdf(-abs(r_val))
+# %%
+np.testing.assert_almost_equal(p_val, p_val_2, decimal=20)
 
 # %%

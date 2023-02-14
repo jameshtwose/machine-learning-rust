@@ -9,8 +9,8 @@ fn main() {
         println!("{}", err);
         process::exit(1);
     }
-    if let Err(err) = pima_classification::run() {
-        println!("{}", err);
-        process::exit(1);
-    }
+    // if let Err(err) = pima_classification::run() {
+    //     println!("{}", err);
+    //     process::exit(1);
+    // }
 }
