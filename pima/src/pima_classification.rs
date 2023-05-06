@@ -1,9 +1,10 @@
 use color_eyre::Result;
 use polars::prelude::*;
 use reqwest::blocking::Client;
-use smartcore::linear::logistic_regression::LogisticRegression;
-use smartcore::metrics::accuracy;
 use std::io::Cursor;
+use linfa::{prelude::*, dataset};
+// use linfa_logistic::error::Result;
+use linfa_logistic::LogisticRegression;
 
 pub fn run() -> Result<()> {
     println!("Classification");
@@ -38,21 +39,26 @@ pub fn run() -> Result<()> {
     let x = df
         .drop(target)?
         .to_ndarray::<Float64Type>()
-        .unwrap()
-        .into_raw_vec();
+        .unwrap();
+        // .into_raw_vec()
 
     let y = df
         .select([target])
         .unwrap()
         .to_ndarray::<Float64Type>()
-        .unwrap()
-        .into_raw_vec();
+        .unwrap();
+        // .into_raw_vec()
+
+    // let x_mat = DenseMatrix::from_2d_array(x);
 
     // println!("x: {:?}", x);
     // println!("y: {:?}", y);
 
     // fit the model
     // let model = LogisticRegression::fit(&x, &y, Default::default()).unwrap();
+    let data: DatasetBase<ndarray::ArrayBase<ndarray::OwnedRepr<f64>, ndarray::Dim<[usize; 2]>>, ndarray::ArrayBase<ndarray::OwnedRepr<f64>, ndarray::Dim<[usize; 1]>>> = DatasetBase::new(x, y);
+    // println!("data: {:?}", data);
+    let model = LogisticRegression::default().fit(&data).unwrap();
 
     Ok(())
 }
