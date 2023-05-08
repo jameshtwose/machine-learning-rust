@@ -8,12 +8,20 @@ use ndarray::{Array1, ArrayBase, OwnedRepr};
 use polars::prelude::*;
 use reqwest::blocking::Client;
 use std::io::Cursor;
+use std::fs::OpenOptions;
+use std::io::Write;
 
 
 pub fn model_fit_predict_evaluate(
     x: ArrayBase<OwnedRepr<f64>, ndarray::Dim<[usize; 2]>>,
     y: Array1<i64>,
 ) -> Result<()> {
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .create(true)
+        .open("model_output.txt")?;
+
     let y_test = y.clone();
 
     // convert the data to a linfa dataset
@@ -38,6 +46,8 @@ pub fn model_fit_predict_evaluate(
     let cm = BinaryConfusionMatrix::compute(&y_pred_vec, &y_test_vec, threshold)?;
     println!("confusion matrix:");
     println!("{}", cm);
+    writeln!(file, "confusion matrix:").unwrap();
+    writeln!(file, "{}", cm).unwrap();
 
     // print the metrics of interest
     println!("accuracy: {}", cm.accuracy()?);
