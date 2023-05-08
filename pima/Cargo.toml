@@ -9,12 +9,12 @@ edition = "2021"
 conv = "0.3.3"
 statrs = "0.16.0"
 color-eyre = "0.6.2"
-smartcore = { version = "0.3.0", features = ["ndarray-bindings"] }
 linfa = "0.6.1"
+linfa-trees = "0.6.1"
 linfa-logistic = "0.6.1"
-linfa-datasets = { version = "0.6.1", features = ["winequality"] }
 ndarray = "0.15.4"
 ndarray-stats = "0.5.1"
+eval-metrics = "1.0.2"
 polars = { version = "0.24.0", features = ["describe", "lazy", "csv-file", "strings", 
                                             "dtype-datetime", "ndarray",
                                             "temporal", "dtype-duration", "dtype-categorical", 
