@@ -2,7 +2,8 @@ use color_eyre::Result;
 use polars::prelude::*;
 use reqwest::blocking::Client;
 use std::io::Cursor;
-use linfa::{prelude::*, dataset};
+use ndarray::Array1;
+use linfa::prelude::*;
 // use linfa_logistic::error::Result;
 use linfa_logistic::LogisticRegression;
 
@@ -40,25 +41,26 @@ pub fn run() -> Result<()> {
         .drop(target)?
         .to_ndarray::<Float64Type>()
         .unwrap();
-        // .into_raw_vec()
 
-    let y = df
-        .select([target])
+    let y: Array1<i64> = df
+        .column(target)
         .unwrap()
-        .to_ndarray::<Float64Type>()
-        .unwrap();
-        // .into_raw_vec()
+        .i64()
+        .unwrap()
+        .into_iter()
+        .map(|opt_val| opt_val.unwrap())
+        .collect();
 
-    // let x_mat = DenseMatrix::from_2d_array(x);
-
-    // println!("x: {:?}", x);
-    // println!("y: {:?}", y);
-
+    // convert the data to a linfa dataset
+    let data = DatasetBase::new(x, y);
+    
     // fit the model
-    // let model = LogisticRegression::fit(&x, &y, Default::default()).unwrap();
-    let data: DatasetBase<ndarray::ArrayBase<ndarray::OwnedRepr<f64>, ndarray::Dim<[usize; 2]>>, ndarray::ArrayBase<ndarray::OwnedRepr<f64>, ndarray::Dim<[usize; 1]>>> = DatasetBase::new(x, y);
-    // println!("data: {:?}", data);
     let model = LogisticRegression::default().fit(&data).unwrap();
+
+    // predict the target
+    let y_pred = model.predict(&data);
+    // print the predictions
+    println!("y_pred: {:?}", y_pred);
 
     Ok(())
 }
